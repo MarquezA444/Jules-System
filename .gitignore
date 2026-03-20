@@ -1,0 +1,19 @@
+# Entorno virtual
+venv/
+
+# Variables de entorno
+.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Tests
+.pytest_cache/
+.hypothesis/
+
+# Kiro
+.kiro/
