@@ -1,14 +1,14 @@
-﻿# Jules System
+﻿# Argos System
 
-Jules es una herramienta de documentación automática de código para desarrolladores que usan Obsidian como segundo cerebro.
+Argos es una herramienta de documentación automática de código para desarrolladores que usan Obsidian como segundo cerebro.
 
-Observa tus proyectos en busca de comentarios `@jules` en el código fuente, genera notas Markdown estructuradas usando IA (Groq / Llama 3.3) y las deposita automáticamente en la carpeta `00_Inbox/` de tu vault de Obsidian. También incluye un modo CLI para escanear proyectos completos de una sola vez.
+Observa tus proyectos en busca de comentarios `@argos` en el código fuente, genera notas Markdown estructuradas usando IA (Groq / Llama 3.3) y las deposita automáticamente en la carpeta `00_Inbox/` de tu vault de Obsidian. También incluye un modo CLI para escanear proyectos completos de una sola vez.
 
 ---
 
 ## Cómo funciona
 
-1. Escribís un comentario `@jules` en cualquier archivo de código
+1. Escribís un comentario `@argos` en cualquier archivo de código
 2. Jules detecta el comentario (en tiempo real o via scan)
 3. Groq/Llama 3.3 genera una nota Markdown estructurada con contexto, fragmento de código y tags
 4. La nota se guarda automáticamente en tu vault de Obsidian
@@ -28,8 +28,8 @@ Observa tus proyectos en busca de comentarios `@jules` en el código fuente, gen
 **1. Clonar el repositorio**
 
 ```bash
-git clone https://github.com/tu-usuario/jules-system.git
-cd jules-system
+git clone https://github.com/tu-usuario/Argos-System.git
+cd Argos-System
 ```
 
 **2. Crear y activar el entorno virtual**
@@ -85,15 +85,15 @@ OBSIDIAN_API_KEY=tu_api_key_de_obsidian
 Iniciá el watcher y dejalo corriendo en una terminal:
 
 ```bash
-python jules.py
+python argos.py
 ```
 
-Jules observará los directorios configurados en `WATCH_DIRS`. Cada vez que guardés un archivo con un comentario `@jules`, generará y enviará la nota automáticamente.
+Argos observará los directorios configurados en `WATCH_DIRS`. Cada vez que guardés un archivo con un comentario `@argos`, generará y enviará la nota automáticamente.
 
 ```
-2026-03-19 18:02:41 - JulesWatcher - INFO - ¡Nuevo @jules detectado en index.js!
-2026-03-19 18:02:43 - JulesWatcher - INFO - Nota generada exitosamente por Groq.
-2026-03-19 18:02:45 - JulesWatcher - INFO - [OK] Nota creada — index.js → 'Agregar Nota a Contrato Seguido'
+2026-03-19 18:02:41 - ArgosWatcher - INFO - ¡Nuevo @argos detectado en index.js!
+2026-03-19 18:02:43 - ArgosWatcher - INFO - Nota generada exitosamente por Groq.
+2026-03-19 18:02:45 - ArgosWatcher - INFO - [OK] Nota creada — index.js → 'Agregar Nota a Contrato Seguido'
 ```
 
 ### Modo Scan — documentar un proyecto existente
@@ -101,7 +101,7 @@ Jules observará los directorios configurados en `WATCH_DIRS`. Cada vez que guar
 Para procesar un directorio completo de una sola vez sin necesidad de modificar archivos:
 
 ```bash
-python jules.py scan /ruta/a/tu/proyecto
+python argos.py scan /ruta/a/tu/proyecto
 ```
 
 Al finalizar verás un resumen:
@@ -117,23 +117,23 @@ Resumen del scan:
 
 ### Insertar un trigger en tu código
 
-Añadí un comentario `@jules` seguido de una descripción en cualquier archivo de código:
+Añadí un comentario `@argos` seguido de una descripción en cualquier archivo de código:
 
 ```javascript
-// @jules Explicar cómo funciona el sistema de autenticación JWT en este módulo
+// @argos Explicar cómo funciona el sistema de autenticación JWT en este módulo
 exports.handler = async (event) => {
   // ...
 };
 ```
 
 ```python
-# @jules Documentar el algoritmo de caché con Redis y sus casos de invalidación
+# @argos Documentar el algoritmo de caché con Redis y sus casos de invalidación
 def get_cached_data(key: str):
     ...
 ```
 
 ```sql
--- @jules Explicar la lógica de esta query y sus índices relevantes
+-- @argos Explicar la lógica de esta query y sus índices relevantes
 SELECT * FROM contratos WHERE ...
 ```
 
@@ -144,8 +144,8 @@ Jules funciona con cualquier lenguaje de programación.
 ## Estructura del proyecto
 
 ```
-jules-system/
-├── jules.py            # Punto de entrada — watcher y CLI scan
+Argos-System/
+├── argos.py            # Punto de entrada — watcher y CLI scan
 ├── groq_client.py      # Cliente Groq/Llama — genera las notas Markdown
 ├── obsidian_client.py  # Cliente Obsidian REST API — deposita las notas
 ├── test_jules_scan.py  # Suite de tests (pytest + Hypothesis)
@@ -199,7 +199,7 @@ _Generado por Jules · 2026-03-19_
 
 ## Deduplicación
 
-Jules mantiene un caché en `~/.jules_cache.json`. Los triggers ya procesados se omiten automáticamente tanto en modo watcher como en modo scan, evitando notas duplicadas al reiniciar o re-escanear.
+Jules mantiene un caché en `~/.argos_cache.json`. Los triggers ya procesados se omiten automáticamente tanto en modo watcher como en modo scan, evitando notas duplicadas al reiniciar o re-escanear.
 
 ---
 
@@ -218,5 +218,5 @@ python -m pytest test_jules_scan.py -v
 ## Notas importantes
 
 - El archivo `.env` nunca debe subirse a control de versiones (está en `.gitignore`)
-- Jules-System debe vivir **fuera** del vault de Obsidian para que el vault contenga únicamente notas `.md`
+- Argos-System debe vivir **fuera** del vault de Obsidian para que el vault contenga únicamente notas `.md`
 - El plugin Local REST API de Obsidian debe estar activo y Obsidian debe estar abierto para que las notas se depositen correctamente

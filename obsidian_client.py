@@ -1,4 +1,4 @@
-import os
+﻿import os
 import requests
 import logging
 from urllib.parse import quote
@@ -7,7 +7,7 @@ import re
 
 load_dotenv()
 
-logger = logging.getLogger("JulesObsidian")
+logger = logging.getLogger("ArgosObsidian")
 
 def sanitize_filename(title: str) -> str:
     """Sanitiza el título para usarlo como nombre de archivo."""

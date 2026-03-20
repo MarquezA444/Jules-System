@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for jules-cli-scan feature.
 """
 import os
@@ -7,7 +7,7 @@ import pytest
 from hypothesis import given, settings, assume
 from hypothesis import strategies as st
 
-from jules import FileScanner
+from argos import FileScanner
 
 
 # ---------------------------------------------------------------------------
@@ -151,7 +151,7 @@ import sys
 import json
 from unittest.mock import patch, MagicMock
 from hypothesis import HealthCheck
-from jules import ScanSummary, load_cache, save_cache
+from argos import ScanSummary, load_cache, save_cache
 
 
 # ---------------------------------------------------------------------------
@@ -175,7 +175,7 @@ def test_invalid_path_produces_error(suffix):
     For any string that does not correspond to an existing directory,
     run_scan must exit with a non-zero code and print an error message.
     """
-    from jules import run_scan
+    from argos import run_scan
 
     with tempfile.TemporaryDirectory() as root:
         non_existent = os.path.join(root, f"does_not_exist_{suffix}")
@@ -198,7 +198,7 @@ def test_file_path_not_directory_produces_error(filename):
 
     Passing a file path (not a directory) must also exit with non-zero code.
     """
-    from jules import run_scan
+    from argos import run_scan
 
     with tempfile.TemporaryDirectory() as root:
         file_path = os.path.join(root, filename + ".txt")
@@ -230,12 +230,12 @@ def test_missing_env_vars_produce_error_before_scanning(missing):
     When GROQ_API_KEY or OBSIDIAN_INBOX_URL are not defined, run_scan must
     exit with non-zero code without scanning any files.
     """
-    from jules import run_scan
+    from argos import run_scan
 
     with tempfile.TemporaryDirectory() as root:
         # Create a valid directory with a file so scanning would happen if env vars were present
         with open(os.path.join(root, "file.txt"), "w") as f:
-            f.write("# @jules test\n")
+            f.write("# @argos test\n")
 
         original_get = os.environ.get
 
@@ -247,7 +247,7 @@ def test_missing_env_vars_produce_error_before_scanning(missing):
         scanner_calls = []
 
         with patch("os.environ.get", side_effect=patched_get):
-            with patch("jules.FileScanner.run", side_effect=lambda *a, **kw: scanner_calls.append(a)):
+            with patch("argos.FileScanner.run", side_effect=lambda *a, **kw: scanner_calls.append(a)):
                 with pytest.raises(SystemExit) as exc_info:
                     run_scan(root)
 
@@ -274,7 +274,7 @@ def test_summary_counts_match_accumulated_results(created, skipped, errors):
     The summary printed at the end must match the accumulated counters from
     all scan_file results.
     """
-    from jules import FileScanner, ScanResult
+    from argos import FileScanner, ScanResult
 
     scanner = FileScanner()
 
@@ -342,7 +342,7 @@ def test_exit_code_reflects_errors(error_count):
     If summary.errors > 0, process must exit with code 1.
     If summary.errors == 0, process must exit with code 0.
     """
-    from jules import run_scan, ScanSummary
+    from argos import run_scan, ScanSummary
 
     fake_summary = ScanSummary(
         files_scanned=1,
@@ -356,7 +356,7 @@ def test_exit_code_reflects_errors(error_count):
 
     with tempfile.TemporaryDirectory() as root:
         with patch("os.environ.get", side_effect=lambda k, d=None: env.get(k, d)):
-            with patch("jules.FileScanner.run", return_value=fake_summary):
+            with patch("argos.FileScanner.run", return_value=fake_summary):
                 with pytest.raises(SystemExit) as exc_info:
                     run_scan(root)
 
@@ -380,7 +380,7 @@ def test_progress_output_contains_file_paths(n_files):
     output must contain the path of each file being processed.
     """
     import io
-    from jules import FileScanner, ScanResult
+    from argos import FileScanner, ScanResult
 
     scanner = FileScanner()
 
@@ -420,12 +420,12 @@ def test_help_flag_exits_zero():
     """
     import subprocess
     result = subprocess.run(
-        [sys.executable, "jules.py", "--help"],
+        [sys.executable, "argos.py", "--help"],
         capture_output=True,
         text=True,
     )
     assert result.returncode == 0
-    assert "usage" in result.stdout.lower() or "jules" in result.stdout.lower()
+    assert "usage" in result.stdout.lower() or "argos" in result.stdout.lower()
 
 
 # Test 2: Directorio vacío → mensaje informativo + exit 0 (Req 2.4)
@@ -436,7 +436,7 @@ def test_empty_directory_exits_zero(tmp_path, monkeypatch):
     Cuando no hay archivos elegibles, run_scan debe imprimir un mensaje
     informativo y salir con código 0.
     """
-    from jules import run_scan
+    from argos import run_scan
 
     monkeypatch.setenv("GROQ_API_KEY", "test-key")
     monkeypatch.setenv("OBSIDIAN_INBOX_URL", "http://localhost")
@@ -454,13 +454,13 @@ def test_cache_created_on_first_write(tmp_path):
 
     Si el archivo de caché no existe, save_cache debe crearlo al primer write.
     """
-    from jules import save_cache
+    from argos import save_cache
 
     cache_path = tmp_path / "test_cache.json"
     assert not cache_path.exists()
 
-    with patch("jules.CACHE_FILE", str(cache_path)):
-        save_cache({"abc123": {"timestamp": 1.0, "filepath": "f.py", "comment": "# @jules"}})
+    with patch("argos.CACHE_FILE", str(cache_path)):
+        save_cache({"abc123": {"timestamp": 1.0, "filepath": "f.py", "comment": "# @argos"}})
 
     assert cache_path.exists()
     with open(cache_path, "r") as f:

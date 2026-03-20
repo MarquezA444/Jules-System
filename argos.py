@@ -1,4 +1,4 @@
-import argparse
+﻿import argparse
 import os
 import sys
 import time
@@ -22,7 +22,7 @@ logging.basicConfig(
         logging.StreamHandler(sys.stdout)
     ]
 )
-logger = logging.getLogger("JulesWatcher")
+logger = logging.getLogger("ArgosWatcher")
 
 # Cargar variables de entorno
 load_dotenv()
@@ -95,7 +95,7 @@ class FileScanner:
             return result
 
         for idx, line in enumerate(lines):
-            if "@jules" not in line:
+            if "@argos" not in line:
                 continue
 
             result.triggers_found += 1
@@ -171,7 +171,7 @@ class FileScanner:
         return summary
 
 
-CACHE_FILE = os.path.expanduser("~/.jules_cache.json")
+CACHE_FILE = os.path.expanduser("~/.argos_cache.json")
 MAX_FILE_SIZE_BYTES = 10 * 1024  # 10KB
 LINES_AROUND = 50
 
@@ -212,7 +212,7 @@ def process_file(filepath: str) -> None:
             lines = f.readlines()
 
         for idx, line in enumerate(lines):
-            if "@jules" in line:
+            if "@argos" in line:
                 comment_text = line.strip()
 
                 # Generar hash del comentario + archivo
@@ -224,7 +224,7 @@ def process_file(filepath: str) -> None:
                     logger.debug(f"Comentario ya procesado (Hash: {current_hash[:8]}): {comment_text}")
                     continue
 
-                logger.info(f"¡Nuevo @jules detectado en {filepath}!")
+                logger.info(f"¡Nuevo @argos detectado en {filepath}!")
                 context = extract_context(filepath, idx, lines)
 
                 logger.info(f"Contexto extraído ({len(context)} caracteres).")
@@ -258,7 +258,7 @@ def process_file(filepath: str) -> None:
     except Exception as e:
         logger.error(f"Error procesando el archivo {filepath}: {e}")
 
-class JulesEventHandler(FileSystemEventHandler):
+class ArgosEventHandler(FileSystemEventHandler):
     def __init__(self, watch_dirs: List[str]):
         self.watch_dirs = [os.path.abspath(d) for d in watch_dirs]
         self.ignored_paths = ['.git', '__pycache__', 'node_modules', 'venv', '.env']
@@ -288,7 +288,7 @@ def run_watcher() -> None:
     watch_dirs = [d.strip() for d in watch_dirs_env.split(",")]
 
     observer = Observer()
-    handler = JulesEventHandler(watch_dirs)
+    handler = ArgosEventHandler(watch_dirs)
 
     for directory in watch_dirs:
         if os.path.exists(directory) and os.path.isdir(directory):
@@ -302,14 +302,14 @@ def run_watcher() -> None:
         sys.exit(1)
 
     observer.start()
-    logger.info("Jules Watcher iniciado. Esperando eventos...")
+    logger.info("Argos Watcher iniciado. Esperando eventos...")
 
     try:
         while True:
             time.sleep(1)
     except KeyboardInterrupt:
         observer.stop()
-        logger.info("Jules Watcher detenido por el usuario.")
+        logger.info("Argos Watcher detenido por el usuario.")
     observer.join()
 
 
@@ -341,10 +341,10 @@ def run_scan(path: str) -> None:
 
 
 def main():
-    parser = argparse.ArgumentParser(prog="jules", description="Jules - Knowledge capture tool")
+    parser = argparse.ArgumentParser(prog="argos", description="Jules - Knowledge capture tool")
     subparsers = parser.add_subparsers(dest="command")
 
-    scan_parser = subparsers.add_parser("scan", help="Scan a directory for @jules triggers")
+    scan_parser = subparsers.add_parser("scan", help="Scan a directory for @argos triggers")
     scan_parser.add_argument("path", help="Root directory to scan")
 
     args = parser.parse_args()

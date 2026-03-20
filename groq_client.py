@@ -1,4 +1,4 @@
-import os
+﻿import os
 import json
 import logging
 from typing import Dict, Any
@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 # Cargar variables de entorno
 load_dotenv()
 
-logger = logging.getLogger("JulesGroq")
+logger = logging.getLogger("ArgosGroq")
 
 def get_groq_client() -> Groq:
     api_key = os.environ.get("GROQ_API_KEY")
@@ -18,7 +18,7 @@ def get_groq_client() -> Groq:
     return Groq(api_key=api_key)
 
 SYSTEM_PROMPT = """Eres Jules, un asistente de captura de conocimiento técnico (Segundo Cerebro).
-Tu objetivo es transformar un fragmento de código con un comentario `@jules` en una nota estructurada para Obsidian.
+Tu objetivo es transformar un fragmento de código con un comentario `@argos` en una nota estructurada para Obsidian.
 
 La salida debe ser ÚNICAMENTE el contenido de la nota en formato Markdown, sin texto adicional antes o después.
 El formato DEBE seguir estrictamente esta estructura:
