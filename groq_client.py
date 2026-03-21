@@ -1,7 +1,7 @@
 ﻿import os
 import json
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Iterator, List
 from groq import Groq
 from dotenv import load_dotenv
 
@@ -114,3 +114,25 @@ CONTEXTO DEL CÓDIGO:
     except Exception as e:
         logger.error(f"Error al generar nota con Groq: {e}")
         raise
+
+
+def stream_chat(
+    messages: List[dict],
+    model: str = "llama-3.3-70b-versatile",
+    temperature: float = 0.7,
+) -> Iterator[str]:
+    """
+    Yields text tokens from the Groq API as they arrive (streaming).
+    Propagates all exceptions to the caller.
+    """
+    client = get_groq_client()
+    completion = client.chat.completions.create(
+        messages=messages,
+        model=model,
+        temperature=temperature,
+        stream=True,
+    )
+    for chunk in completion:
+        delta = chunk.choices[0].delta
+        if delta.content:
+            yield delta.content

@@ -1,0 +1,30 @@
+--- application/vnd.olrapi.simple+json ---
+Status: 400
+Error: {
+  "message": "Unknown or invalid Content-Type specified in Content-Type header.",
+  "errorCode": 40012
+}
+--- application/vnd.olrapi.simple-query+json ---
+Status: 400
+Error: {
+  "message": "Unknown or invalid Content-Type specified in Content-Type header.",
+  "errorCode": 40012
+}
+--- application/vnd.olrapi.jsonlogic+json ---
+Status: 400
+Error: {
+  "message": "The query you provided could not be processed.\nUnrecognized operation query (while processing 06_Aprendizajes/Lecciones_Aprendidas.md)",
+  "errorCode": 40070
+}
+--- application/vnd.olrapi.dataview.dql+txt ---
+Status: 400
+Error: {
+  "message": "The query you provided could not be processed.\nCannot read properties of undefined (reading 'tryQuery')",
+  "errorCode": 40070
+}
+--- application/json ---
+Status: 400
+Error: {
+  "message": "Unknown or invalid Content-Type specified in Content-Type header.",
+  "errorCode": 40012
+}

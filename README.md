@@ -1,25 +1,27 @@
-﻿# Argos System
+# Argos System
 
 Argos es una herramienta de documentación automática de código para desarrolladores que usan Obsidian como segundo cerebro.
 
-Observa tus proyectos en busca de comentarios `@argos` en el código fuente, genera notas Markdown estructuradas usando IA (Groq / Llama 3.3) y las deposita automáticamente en la carpeta `00_Inbox/` de tu vault de Obsidian. También incluye un modo CLI para escanear proyectos completos de una sola vez.
+Observa tus proyectos en busca de comentarios `@argos` en el código fuente, genera notas Markdown estructuradas usando IA y las deposita automáticamente en tu Bóveda de Obsidian. 
+Además, incluye un **Modo Chat Interactivo** dotado de un sistema RAG (Retrieval-Augmented Generation) que utiliza tu Bóveda y los archivos locales de tus proyectos como su cerebro, permitiéndote hacer preguntas técnicas complejas sobre tu propio código.
 
 ---
 
-## Cómo funciona
+## Características Principales
 
-1. Escribís un comentario `@argos` en cualquier archivo de código
-2. Jules detecta el comentario (en tiempo real o via scan)
-3. Groq/Llama 3.3 genera una nota Markdown estructurada con contexto, fragmento de código y tags
-4. La nota se guarda automáticamente en tu vault de Obsidian
+1. **Modo Watcher (Tiempo Real)**: Detecta comentarios `@argos` cuando guardas un archivo y genera documentación automática en Obsidian.
+2. **Modo Chat (Tu IA Personal)**: Chat interactivo por terminal (Jules) con acceso total en tiempo real a tus notas de Obsidian y código fuente local.
+3. **Buscador RAG de Precisión**: Utiliza heurística de *Stop Words* y *JsonLogic* nativo contra la API de Obsidian para encontrar exactamente el código o nota que necesitas, sin alucinaciones.
+4. **Exportación de Conversaciones**: Guarda hilos enteros de chat usando el comando `/save` directo a tu Bóveda.
+5. **Dashboard Interactivo**: UI premium en la terminal usando la librería `rich`.
 
 ---
 
 ## Requisitos previos
 
 - Python 3.10+
-- [Obsidian](https://obsidian.md/) con el plugin [Local REST API](https://github.com/coddingtonbear/obsidian-local-rest-api) instalado y activo
-- Una cuenta en [Groq](https://console.groq.com/) para obtener un API key gratuito
+- [Obsidian](https://obsidian.md/) con el plugin [Local REST API](https://github.com/coddingtonbear/obsidian-local-rest-api) instalado y activo.
+- Una cuenta en [Groq](https://console.groq.com/) para obtener un API key gratuito (modelo Llama 3.3).
 
 ---
 
@@ -62,8 +64,8 @@ Abrí `.env` y completá los valores:
 # API key de Groq — obtenela en https://console.groq.com/
 GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx
 
-# Directorios de proyectos a observar, separados por coma
-WATCH_DIRS=C:\Projects\my-app,C:\Projects\other-app
+# Directorios de proyectos a observar, separados por coma. Ejemplo: .,..
+WATCH_DIRS=.,..
 
 # URL del endpoint REST Local de Obsidian
 # El formato correcto es: http://localhost:27123/vault/<nombre-de-tu-vault>/00_Inbox
@@ -78,45 +80,26 @@ OBSIDIAN_API_KEY=tu_api_key_de_obsidian
 
 ---
 
-## Uso
+## Uso (Dashboard Start)
 
-### Modo Watcher — documentación en tiempo real
-
-Iniciá el watcher y dejalo corriendo en una terminal:
+Para iniciar Argos y acceder al menú interactivo de la terminal:
 
 ```bash
 python argos.py
 ```
 
-Argos observará los directorios configurados en `WATCH_DIRS`. Cada vez que guardés un archivo con un comentario `@argos`, generará y enviará la nota automáticamente.
+Desde el Dashboard podrás moverte con las flechas direccionales y seleccionar el modo de operación:
 
-```
-2026-03-19 18:02:41 - ArgosWatcher - INFO - ¡Nuevo @argos detectado en index.js!
-2026-03-19 18:02:43 - ArgosWatcher - INFO - Nota generada exitosamente por Groq.
-2026-03-19 18:02:45 - ArgosWatcher - INFO - [OK] Nota creada — index.js → 'Agregar Nota a Contrato Seguido'
-```
+### 1. Modo Chat (Asistente RAG)
 
-### Modo Scan — documentar un proyecto existente
+Jules (la IA) actuará como un desarrollador experto que conoce todo tu código y notas.
+- **RAG Dual Engine**: Cada pregunta tuya escanea tu Bóveda de Obsidian (vía JsonLogic) y todos los archivos listados en `WATCH_DIRS` (buscando coincidencias de texto exactas, ignorando *stop words*).
+- **Consola Markdown**: Las respuestas se renderizan con resaltado de sintaxis, tablas y colores de Markdown.
+- **Comandos**: Escribe `/save` en cualquier momento para exportar toda tu conversación técnica directamente como una nota en la carpeta Inbox de Obsidian. Escribe `/exit` para salir.
 
-Para procesar un directorio completo de una sola vez sin necesidad de modificar archivos:
+### 2. Modo Watcher (Documentación en vivo)
 
-```bash
-python argos.py scan /ruta/a/tu/proyecto
-```
-
-Al finalizar verás un resumen:
-
-```
-Resumen del scan:
-  Archivos escaneados : 142
-  Triggers encontrados: 8
-  Notas creadas       : 6
-  Triggers omitidos   : 2
-  Errores             : 0
-```
-
-### Insertar un trigger en tu código
-
+Al iniciarlo, Argos se queda escuchando cambios en los archivos.
 Añadí un comentario `@argos` seguido de una descripción en cualquier archivo de código:
 
 ```javascript
@@ -125,6 +108,13 @@ exports.handler = async (event) => {
   // ...
 };
 ```
+
+Argos leerá el archivo, aislará la función o clase subyacente, la explicará y mandará la nota a Obsidian de forma silenciosa e independiente.
+
+### 3. Modo Scan (Documentación masiva)
+
+Para procesar un directorio completo de una sola vez sin necesidad de modificar archivos de forma activa. Escaneará **todos** los `@argos` que tengas pendientes y generará todas las notas juntas.
+
 
 ```python
 # @argos Documentar el algoritmo de caché con Redis y sus casos de invalidación
